@@ -1,0 +1,11 @@
+{
+  "name": "building-management-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts":{
+    "start": "node index.js",
+    "start-dev":"nodemon index.js",
+    "git-push":"git push origin main && git push second-remote main"
+  }
+}
