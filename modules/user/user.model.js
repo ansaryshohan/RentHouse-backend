@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
+      default: "user",
+    },
+    image: {
+      type: String,
+      trim: true,
     },
     email: {
       type: String,
