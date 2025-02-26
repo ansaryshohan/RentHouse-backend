@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const dbConnect = require("./dbConnection/dbConnect");
 const apartmentsRouter = require("./modules/apartments/apartments.route");
+const userRouter = require("./modules/user/user.route");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 8000;
@@ -33,7 +34,7 @@ app.post("/jwt", async (req, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    // sameSite: "none",
   });
   //  send response
   res.json({ message: "Login successful" });
@@ -44,7 +45,7 @@ app.post("/remove-jwt", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    // sameSite: "none",
   });
 
   res.json({ message: "Logout successful" });
@@ -52,6 +53,7 @@ app.post("/remove-jwt", (req, res) => {
 
 // routes
 app.use("/rent-easy/apartments", apartmentsRouter);
+app.use("/rent-easy/user", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
