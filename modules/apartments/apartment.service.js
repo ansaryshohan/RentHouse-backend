@@ -122,10 +122,10 @@ const getAllCarsByAUserDataFromDB = async (userEmail) => {
   }
 };
 
-// add car to the database
-const addACarToDB = async (carData) => {
+// add apartment to the database
+const addApartmentInDB = async (apartmentData) => {
   try {
-    const dataAdding = new ApartmentModel(carData);
+    const dataAdding = new ApartmentModel(apartmentData);
     // console.log(dataAdding);
     await dataAdding.save();
     return dataAdding;
@@ -156,5 +156,6 @@ module.exports = {
   getTopApartmentsDataFromDB,
   getAllApartmentDataFromDB,
   getApprovedApartmentDataFromDB,
-  getAllApartmentLocationSearchFromDB
+  getAllApartmentLocationSearchFromDB,
+  addApartmentInDB
 };

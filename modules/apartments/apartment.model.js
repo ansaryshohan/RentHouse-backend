@@ -5,7 +5,7 @@ const apartmentSchema = new mongoose.Schema(
     apartmentName: { type: String, required: true },
     houseNo: { type: String, required: true },
     location: { type: String, required: true },
-    floorNo: { type: Number, required: true },
+    floorNo: { type: String, required: true },
     blockNo: { type: String, required: true },
     price: { type: Number, required: true },
     addedBy: {

@@ -12,7 +12,10 @@ const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://rent-easy-building-management.web.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://rent-easy-building-management.web.app",
+    ],
     credentials: true,
   })
 );

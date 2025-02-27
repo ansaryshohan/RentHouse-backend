@@ -2,7 +2,8 @@ const {
   getTopApartmentsDataFromDB,
   getAllApartmentDataFromDB,
   getApprovedApartmentDataFromDB,
-  getAllApartmentLocationSearchFromDB
+  getAllApartmentLocationSearchFromDB,
+  addApartmentInDB
 } = require("./apartment.service");
 
 // get the top six apartment data---------------
@@ -103,20 +104,20 @@ const getAllCarsByAUserController = async (req, res) => {
 
 
 
-// add a car in the database-----------
-const addACarController = async (req, res) => {
-  const carData = req.body;
-  // console.log(carData)
+// add a apartment in the database-----------
+const addApartmentController = async (req, res) => {
+  const apartmentData = req.body;
+  // console.log(apartmentData)
   // first verify the token data---
-  if (carData?.addedBy?.email !== req?.user?.userEmail) {
+  if (apartmentData?.addedBy?.email !== req?.user?.userEmail) {
     return res
       .status(403)
       .json({ status: "error", data: null, message: "Forbidden access" });
   }
   try {
-    const carDataAdding = await addACarToDB(carData);
-    // console.log(carDataAdding);
-    return res.status(201).json({ status: "success", data: carDataAdding ,message: "car added successfully"});
+    const apartmentDataAdding = await addApartmentInDB(apartmentData);
+    // console.log(apartmentDataAdding);
+    return res.status(201).json({ status: "success", data: apartmentDataAdding ,message: "car added successfully"});
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });
   }
@@ -152,4 +153,5 @@ module.exports = {
   getAllApartmentController,
   getAllApprovedApartmentController,
   getAllApartmentAccordingSearchController,
+  addApartmentController,
 };
