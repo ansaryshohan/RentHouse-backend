@@ -117,18 +117,37 @@ const getSingleCarDataFromDB = async (carId) => {
     throw new Error(error.message);
   }
 };
-// user all added car based on email
-const getAllCarsByAUserDataFromDB = async (userEmail) => {
+
+// user all added apartments by a user based on email
+const getAllApartmentsByAUserDataFromDB = async (
+  userEmail = "",
+  perPageData = 5,
+  pageNo = 0,
+  priceSort = ""
+) => {
+  // console.log(userEmail, perPageData, pageNo, priceSort);
+  const sortQuery = {};
+  if (priceSort === "price_asc") {
+    sortQuery.price = 1;
+  }
+  if (priceSort === "price_dsc") {
+    sortQuery.price = -1;
+  }
+
+  // Query to find apartments by user
+  const filterQuery = { "addedBy.email": userEmail };
+
   try {
-    const allCarsByUser = await ApartmentModel.find({
-      "addedBy.email": userEmail,
-    });
-    // console.log(allCars);
-    const totalNoOfCars = await ApartmentModel.countDocuments({
-      "addedBy.email": userEmail,
-    });
-    // console.log(totalNoOfCars);
-    return { allCarsByUser, totalNoOfCars };
+    const allApartmentsByUser = await ApartmentModel.find(filterQuery)
+      .sort(sortQuery)
+      .skip(pageNo * perPageData)
+      .limit(perPageData);
+    // console.log(allApartmentsByUser);
+    const totalNoOfApartmentsByUser = await ApartmentModel.countDocuments(
+      filterQuery
+    );
+    // console.log(totalNoOfApartmentsByUser);
+    return { allApartmentsByUser, totalNoOfApartmentsByUser };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -148,7 +167,7 @@ const addApartmentInDB = async (apartmentData) => {
 // update adminApproval of apartment in the database
 const updateAdminApprovalInDB = async (apartmentId, adminApproval) => {
   try {
-    const find = await ApartmentModel.findOne({_id:apartmentId})
+    const find = await ApartmentModel.findOne({ _id: apartmentId });
     const updateApartment = await ApartmentModel.updateOne(
       { _id: apartmentId },
       { $set: { adminApproval } }
@@ -159,7 +178,7 @@ const updateAdminApprovalInDB = async (apartmentId, adminApproval) => {
     throw new Error(error.message);
   }
 };
-// delete an apartment from the database
+// delete an apartment from the database by admin
 const deleteAnApartmentFromDB = async (apartmentId) => {
   try {
     const findApartment = await ApartmentModel.findOne({ _id: apartmentId });
@@ -173,6 +192,22 @@ const deleteAnApartmentFromDB = async (apartmentId) => {
     throw new Error(error.message);
   }
 };
+// delete an apartment from the database by user
+const deleteAnApartmentByUserFromDB = async (apartmentId, userEmail) => {
+  console.log(apartmentId, userEmail);
+  try {
+    const findApartment = await ApartmentModel.findOne({ _id: apartmentId });
+
+    if (findApartment?.addedBy?.email === userEmail) {
+      const deletedData = await ApartmentModel.deleteOne({ _id: apartmentId });
+
+      return deletedData;
+    }
+    return "forbidden access";
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 module.exports = {
   getTopApartmentsDataFromDB,
@@ -180,6 +215,8 @@ module.exports = {
   getApprovedApartmentDataFromDB,
   getAllApartmentLocationSearchFromDB,
   addApartmentInDB,
+  getAllApartmentsByAUserDataFromDB,
   deleteAnApartmentFromDB,
   updateAdminApprovalInDB,
+  deleteAnApartmentByUserFromDB,
 };
