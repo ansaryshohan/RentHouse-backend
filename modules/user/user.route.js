@@ -26,8 +26,6 @@ router.delete(
 );
 router.get(
   "/user-role/:userEmail",
-  verifyToken,
-  verifyAdmin,
   getUserRoleController
 );
 // public routes

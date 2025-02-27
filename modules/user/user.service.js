@@ -23,9 +23,10 @@ const getUserRoleFromDB = async (userEmail) => {
       { email: 1, role: 1, _id: 1 }
     );
     if (userFound) {
-      return userFound;
+      const isAdmin= userFound?.role ==="admin";
+      return isAdmin
     }
-    return "No User Found";
+    return false;
   } catch (error) {
     throw new Error(error.message);
   }
