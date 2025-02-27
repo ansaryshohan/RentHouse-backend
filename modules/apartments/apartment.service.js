@@ -12,9 +12,21 @@ const getTopApartmentsDataFromDB = async () => {
   }
 };
 // get all the apartments
-const getAllApartmentDataFromDB = async (pageNo = 0, perPageData = 0) => {
+const getAllApartmentDataFromDB = async (
+  pageNo = 0,
+  perPageData = 0,
+  priceSort = ""
+) => {
+  const sortQuery = {};
+  if (priceSort === "price_asc") {
+    sortQuery.price = 1;
+  }
+  if (priceSort === "price_dsc") {
+    sortQuery.price = -1;
+  }
   try {
     const allApartments = await ApartmentModel.find({})
+      .sort(sortQuery)
       .skip(pageNo * perPageData)
       .limit(perPageData);
     // console.log(allCars);
@@ -33,15 +45,13 @@ const getApprovedApartmentDataFromDB = async (
   apartmentType = "",
   searchText = ""
 ) => {
-
-
   // Setting the base query
   const apartmentDataFindQuery = {
     adminApproval: "approved",
   };
 
-  if(apartmentType){
-    apartmentDataFindQuery.category= apartmentType;
+  if (apartmentType) {
+    apartmentDataFindQuery.category = apartmentType;
   }
 
   // **Search in apartment location field only**
@@ -63,7 +73,9 @@ const getApprovedApartmentDataFromDB = async (
       .skip(pageNo * perPageData)
       .limit(perPageData);
     // console.log(allCars);
-    const totalNoOfApartments = await ApartmentModel.countDocuments(apartmentDataFindQuery);
+    const totalNoOfApartments = await ApartmentModel.countDocuments(
+      apartmentDataFindQuery
+    );
     // console.log(totalNoOfCars);
     return { allApartments, totalNoOfApartments };
   } catch (error) {
@@ -80,10 +92,10 @@ const getAllApartmentLocationSearchFromDB = async (searchText = "") => {
         text: {
           query: searchText,
           path: {
-            wildcard: "*"
-          }
-        }
-      }
+            wildcard: "*",
+          },
+        },
+      },
     },
     {
       $group: {
@@ -133,20 +145,30 @@ const addApartmentInDB = async (apartmentData) => {
     throw new Error(error.message);
   }
 };
-// delete a car from the database
-const deleteACarFromDB = async (carId, userEmail) => {
+// update adminApproval of apartment in the database
+const updateAdminApprovalInDB = async (apartmentId, adminApproval) => {
   try {
-    const findCar = await ApartmentModel.findOne({ _id: carId });
-    if (findCar) {
-      // const userEmail= findCar.addedBy.email;
-      const deletedData = await ApartmentModel.deleteOne({ _id: carId });
-      const carDataAfterDelete = await ApartmentModel.find({
-        "addedBy.email": userEmail,
-      });
+    const find = await ApartmentModel.findOne({_id:apartmentId})
+    const updateApartment = await ApartmentModel.updateOne(
+      { _id: apartmentId },
+      { $set: { adminApproval } }
+    );
+    // console.log(find,updateApartment);
+    return updateApartment;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+// delete an apartment from the database
+const deleteAnApartmentFromDB = async (apartmentId) => {
+  try {
+    const findApartment = await ApartmentModel.findOne({ _id: apartmentId });
+    if (findApartment) {
+      const deletedData = await ApartmentModel.deleteOne({ _id: apartmentId });
 
-      return { deletedData, carDataAfterDelete };
+      return deletedData;
     }
-    return { deletedData: { deletedCount: 0 }, carDataAfterDelete: null };
+    return { deletedCount: 0 };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -157,5 +179,7 @@ module.exports = {
   getAllApartmentDataFromDB,
   getApprovedApartmentDataFromDB,
   getAllApartmentLocationSearchFromDB,
-  addApartmentInDB
+  addApartmentInDB,
+  deleteAnApartmentFromDB,
+  updateAdminApprovalInDB,
 };

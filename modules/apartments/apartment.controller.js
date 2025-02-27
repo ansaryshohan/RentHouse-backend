@@ -3,7 +3,9 @@ const {
   getAllApartmentDataFromDB,
   getApprovedApartmentDataFromDB,
   getAllApartmentLocationSearchFromDB,
-  addApartmentInDB
+  addApartmentInDB,
+  deleteAnApartmentFromDB,
+  updateAdminApprovalInDB,
 } = require("./apartment.service");
 
 // get the top six apartment data---------------
@@ -18,12 +20,13 @@ const getTopApartmentController = async (req, res) => {
 
 // get all the apartments data-------------
 const getAllApartmentController = async (req, res) => {
-  const { perPageData, pageNo } = req.query;
+  const { perPageData, pageNo,priceSort } = req.query;
   // console.log(req.query,Number(pageNo),Number(perPageData));
   try {
     const { allApartments, totalNoOfApartments } = await getAllApartmentDataFromDB(
       Number(pageNo),
-      Number(perPageData)
+      Number(perPageData),
+      priceSort
     );
     return res
       .status(200)
@@ -33,7 +36,7 @@ const getAllApartmentController = async (req, res) => {
   }
 };
 
-// get all approved cars data-------------
+// get all approved apartments data-------------
 const getAllApprovedApartmentController = async (req, res) => {
   const { perPageData, pageNo,priceSort,apartmentType,searchText } = req.query;
   // console.log(req.query);
@@ -104,6 +107,25 @@ const getAllCarsByAUserController = async (req, res) => {
 
 
 
+// update an apartment admin approval in the database-----------
+const updateAdminApprovalController = async (req, res) => {
+  const {apartmentId}=req.params;
+  const {adminApproval,userEmail}  = req.body;
+  // console.log(adminApproval,userEmail,apartmentId)
+  // first verify the token data---
+  if (userEmail !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "error", data: null, message: "Forbidden access" });
+  }
+  try {
+    const apartmentDataUpdate = await updateAdminApprovalInDB(apartmentId,adminApproval);
+    // console.log(apartmentDataAdding);
+    return res.status(200).json({ status: "success", data: apartmentDataUpdate ,message: "car added successfully"});
+  } catch (error) {
+    return res.status(500).json({ status: "error", data: error.message });
+  }
+};
 // add a apartment in the database-----------
 const addApartmentController = async (req, res) => {
   const apartmentData = req.body;
@@ -122,10 +144,11 @@ const addApartmentController = async (req, res) => {
     return res.status(500).json({ status: "error", data: error.message });
   }
 };
-// delete a car from the database-----------
-const deleteACarController = async (req, res) => {
-  const { carId } = req.params;
+// delete an apartment from the database-----------
+const deleteAnApartmentController = async (req, res) => {
+  const { apartmentId } = req.params;
   const { userEmail } = req.body;
+  console.log(apartmentId,userEmail)
   // first verify the token data---
   if (userEmail !== req?.user?.userEmail) {
     return res
@@ -133,14 +156,13 @@ const deleteACarController = async (req, res) => {
       .json({ status: "success", data: null, message: "Forbidden access" });
   }
   try {
-    const { deletedData, carDataAfterDelete } = await deleteACarFromDB(
-      carId,
-      userEmail
+    const deletedData = await deleteAnApartmentFromDB(
+      apartmentId
     );
     // console.log(carDataAdding)
     return res.status(200).json({
       status: "success",
-      data: { deletedData, carDataAfterDelete },
+      data: deletedData,
       message: "car deleted successfully",
     });
   } catch (error) {
@@ -154,4 +176,6 @@ module.exports = {
   getAllApprovedApartmentController,
   getAllApartmentAccordingSearchController,
   addApartmentController,
+  deleteAnApartmentController,
+  updateAdminApprovalController
 };

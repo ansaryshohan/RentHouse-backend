@@ -7,11 +7,15 @@ const {
   getAllApartmentController,
   getAllApprovedApartmentController,
   getAllApartmentAccordingSearchController,
-  addApartmentController
+  addApartmentController,
+  deleteAnApartmentController,
+  updateAdminApprovalController
 } = require("./apartment.controller");
 
 // admin only route
 router.get("/all-apartments",verifyToken,verifyAdmin, getAllApartmentController);
+router.patch("/update-adminApproval/:apartmentId",verifyToken,verifyAdmin, updateAdminApprovalController);
+router.delete("/delete-apartment/:apartmentId",verifyToken,verifyAdmin, deleteAnApartmentController);
 // users route
 router.post("/add-apartment",verifyToken,addApartmentController)
 // public routes

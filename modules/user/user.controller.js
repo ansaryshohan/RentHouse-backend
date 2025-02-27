@@ -64,7 +64,7 @@ const deleteUserController = async (req, res) => {
   try {
     const deleteData = await deleteUserInDB(userId);
     return res
-      .status(201)
+      .status(200)
       .json({ status: "success", data: deleteData, message: "user deleted" });
   } catch (error) {
     return res.status(500).json({ status: "error", error });
