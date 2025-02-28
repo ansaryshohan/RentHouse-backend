@@ -108,11 +108,11 @@ const getAllApartmentLocationSearchFromDB = async (searchText = "") => {
   return allApartmentsLocation;
 };
 
-// get a single car by id
-const getSingleCarDataFromDB = async (carId) => {
+// get a apartment by id
+const getSingleApartmentDataFromDB = async (apartmentId) => {
   try {
-    const singleCar = await ApartmentModel.findOne({ _id: carId });
-    return singleCar;
+    const singleApartment = await ApartmentModel.findOne({ _id: apartmentId });
+    return singleApartment;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -216,6 +216,7 @@ module.exports = {
   getAllApartmentLocationSearchFromDB,
   addApartmentInDB,
   getAllApartmentsByAUserDataFromDB,
+  getSingleApartmentDataFromDB,
   deleteAnApartmentFromDB,
   updateAdminApprovalInDB,
   deleteAnApartmentByUserFromDB,

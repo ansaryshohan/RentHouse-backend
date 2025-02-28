@@ -9,6 +9,7 @@ const {
   getAllApartmentAccordingSearchController,
   addApartmentController,
   getAllApartmentsByAUserController,
+  getSingleApartmentController,
   deleteAnApartmentController,
   updateAdminApprovalController,
   deleteApartmentByAUserController
@@ -26,6 +27,7 @@ router.delete("/user-apartment-delete/:apartmentId",verifyToken,deleteApartmentB
 router.get("/top-apartments", getTopApartmentController);
 router.get("/approved-apartments", getAllApprovedApartmentController);
 router.get("/search-apartments", getAllApartmentAccordingSearchController);
+router.get("/:apartmentId", getSingleApartmentController);
 
 
 module.exports = router;
