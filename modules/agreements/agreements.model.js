@@ -14,6 +14,7 @@ const agreementSchema = new mongoose.Schema(
     blockNo: { type: String, required: true },
     houseNo: { type: String, required: true },
     apartmentName: { type: String, required: true },
+    location: { type: String, required: true },
     price: { type: Number, required: true },
     payment: { type: String, enum: ["unpaid", "paid"], default: "unpaid" },
     apartmentImage: { type: String, required: true },

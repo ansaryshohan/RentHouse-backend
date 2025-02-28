@@ -1,4 +1,8 @@
-const { addAgreementInDB } = require("./agreements.service");
+const {
+  addAgreementInDB,
+  getSingleUnPaidAgreementDataFromDB,
+  deleteAnAgreementByUserFromDB,
+} = require("./agreements.service");
 
 // add a Agreement in the database-----------
 const addAgreementController = async (req, res) => {
@@ -40,6 +44,55 @@ const addAgreementController = async (req, res) => {
       status: "success",
       data: agreementDataAdding,
       message: "agreement added successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", data: error.message });
+  }
+};
+
+// get a single unpaid agreement data by user-------------
+const getSingleUnpaidAgreementController = async (req, res) => {
+  const { userEmail } = req.params;
+  // first verify the token data---
+  if (userEmail !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "error", data: null, message: "Forbidden access" });
+  }
+  try {
+    const data = await getSingleUnPaidAgreementDataFromDB(userEmail);
+    return res
+      .status(200)
+      .json({ status: "success", data, message: "data found success" });
+  } catch (error) {
+    return res.status(500).json({ status: "error", error });
+  }
+};
+
+// delete an unpaid agreement by user from the database-----------
+const deleteAnUnpaidAgreementController = async (req, res) => {
+  const { agreementId } = req.params;
+  const { userEmail } = req.body;
+  // first verify the token data---
+  if (userEmail !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "error", data: null, message: "Forbidden access" });
+  }
+  try {
+    const deletedData = await deleteAnAgreementByUserFromDB(
+      agreementId,
+      userEmail
+    );
+    if (deletedData === "forbidden access") {
+      return res
+        .status(403)
+        .json({ status: "error", data: null, message: "Forbidden access" });
+    }
+    return res.status(200).json({
+      status: "success",
+      data: deletedData,
+      message: "agreement deleted successfully",
     });
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });
@@ -118,19 +171,6 @@ const getAllApprovedApartmentController = async (req, res) => {
   }
 };
 
-// get a single apartment data-------------
-const getSingleApartmentController = async (req, res) => {
-  const { apartmentId } = req.params;
-  try {
-    const data = await getSingleApartmentDataFromDB(apartmentId);
-    return res
-      .status(200)
-      .json({ status: "success", data, message: "data found success" });
-  } catch (error) {
-    return res.status(500).json({ status: "error", error });
-  }
-};
-
 // update an apartment admin approval in the database-----------
 const updateAdminApprovalController = async (req, res) => {
   const { apartmentId } = req.params;
@@ -181,38 +221,9 @@ const deleteAnApartmentController = async (req, res) => {
     return res.status(500).json({ status: "error", data: error.message });
   }
 };
-// delete an apartment by a user from the database-----------
-const deleteApartmentByAUserController = async (req, res) => {
-  const { apartmentId } = req.params;
-  const { userEmail } = req.body;
-  // console.log(apartmentId,userEmail)
-  // first verify the token data---
-  if (userEmail !== req?.user?.userEmail) {
-    return res
-      .status(403)
-      .json({ status: "error", data: null, message: "Forbidden access" });
-  }
-  try {
-    const deletedData = await deleteAnApartmentByUserFromDB(
-      apartmentId,
-      userEmail
-    );
-    // console.log(carDataAdding)
-    if (deletedData === "forbidden access") {
-      return res
-        .status(403)
-        .json({ status: "error", data: null, message: "Forbidden access" });
-    }
-    return res.status(200).json({
-      status: "success",
-      data: deletedData,
-      message: "car deleted successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({ status: "error", data: error.message });
-  }
-};
 
 module.exports = {
   addAgreementController,
+  getSingleUnpaidAgreementController,
+  deleteAnUnpaidAgreementController,
 };

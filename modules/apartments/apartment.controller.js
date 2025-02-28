@@ -229,7 +229,7 @@ const deleteApartmentByAUserController = async (req, res) => {
     return res.status(200).json({
       status: "success",
       data: deletedData,
-      message: "car deleted successfully",
+      message: "apartment deleted successfully",
     });
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });

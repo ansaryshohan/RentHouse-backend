@@ -15,12 +15,10 @@ const addAgreementInDB = async (agreementData) => {
       _id: agreementData?.apartmentId,
       availability: true,
     });
-    // console.log(checkApartmentAvailability);
     // first check apartment availability
     if (!checkApartmentAvailability) {
       return "apartment unavailable";
     }
-    // console.log(findAgreementByEmail.length,findAgreementByApartmentId)
     // if we find any data with email and apartmentId
     if (findAgreementByEmail.length > 0 || findAgreementByApartmentId) {
       if (findAgreementByEmail.length > 0) {
@@ -52,6 +50,41 @@ const addAgreementInDB = async (agreementData) => {
     return newDataAdding;
   } catch (error) {
     // console.log(error)
+    throw new Error(error.message);
+  }
+};
+
+// get a unpaid agreement of a user
+const getSingleUnPaidAgreementDataFromDB = async (userEmail) => {
+  try {
+    const singleAgreement = await AgreementModel.find({
+      userEmail,
+      payment: "unpaid",
+    });
+    return singleAgreement;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// delete an agreement from the database by user
+const deleteAnAgreementByUserFromDB = async (agreementId, userEmail) => {
+  console.log(agreementId, userEmail);
+  try {
+    const findAgreement = await AgreementModel.findOne({ _id: agreementId });
+
+    if (findAgreement?.userEmail === userEmail) {
+      const deletedData = await AgreementModel.deleteOne({ _id: agreementId });
+
+      // update the apartment availability to true
+      const updateApartment = await ApartmentModel.updateOne(
+        { _id: findAgreement?.apartmentId },
+        { $set: { availability: true } }
+      );
+      return deletedData;
+    }
+    return "forbidden access";
+  } catch (error) {
     throw new Error(error.message);
   }
 };
@@ -128,16 +161,6 @@ const getApprovedApartmentDataFromDB = async (
   }
 };
 
-// get a apartment by id
-const getSingleApartmentDataFromDB = async (apartmentId) => {
-  try {
-    const singleApartment = await AgreementModel.findOne({ _id: apartmentId });
-    return singleApartment;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 // user all added apartments by a user based on email
 const getAllApartmentsByAUserDataFromDB = async (
   userEmail = "",
@@ -201,21 +224,9 @@ const deleteAnApartmentFromDB = async (apartmentId) => {
     throw new Error(error.message);
   }
 };
-// delete an apartment from the database by user
-const deleteAnApartmentByUserFromDB = async (apartmentId, userEmail) => {
-  console.log(apartmentId, userEmail);
-  try {
-    const findApartment = await AgreementModel.findOne({ _id: apartmentId });
 
-    if (findApartment?.addedBy?.email === userEmail) {
-      const deletedData = await AgreementModel.deleteOne({ _id: apartmentId });
-
-      return deletedData;
-    }
-    return "forbidden access";
-  } catch (error) {
-    throw new Error(error.message);
-  }
+module.exports = {
+  addAgreementInDB,
+  getSingleUnPaidAgreementDataFromDB,
+  deleteAnAgreementByUserFromDB,
 };
-
-module.exports = { addAgreementInDB };

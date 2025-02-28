@@ -30,12 +30,10 @@ dbConnect();
 // jwt token create
 app.post("/jwt", async (req, res) => {
   const { userEmail } = req.body;
-  // console.log(userEmail)
   // make the token
   const token = jwt.sign({ userEmail }, process.env.JWT_ACCESS_TOKEN_SECRET, {
     expiresIn: "5h",
   });
-  // console.log(token)
   //  set http only cookie
   res.cookie("token", token, {
     httpOnly: true,
