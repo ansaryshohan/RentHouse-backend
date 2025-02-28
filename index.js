@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const dbConnect = require("./dbConnection/dbConnect");
 const apartmentsRouter = require("./modules/apartments/apartments.route");
+const agreementsRouter = require("./modules/agreements/agreements.route");
 const userRouter = require("./modules/user/user.route");
 require("dotenv").config();
 const app = express();
@@ -29,10 +30,12 @@ dbConnect();
 // jwt token create
 app.post("/jwt", async (req, res) => {
   const { userEmail } = req.body;
+  // console.log(userEmail)
   // make the token
   const token = jwt.sign({ userEmail }, process.env.JWT_ACCESS_TOKEN_SECRET, {
     expiresIn: "5h",
   });
+  // console.log(token)
   //  set http only cookie
   res.cookie("token", token, {
     httpOnly: true,
@@ -56,6 +59,7 @@ app.post("/remove-jwt", (req, res) => {
 
 // routes
 app.use("/rent-easy/apartments", apartmentsRouter);
+app.use("/rent-easy/agreements", agreementsRouter);
 app.use("/rent-easy/user", userRouter);
 
 app.get("/", (req, res) => {
