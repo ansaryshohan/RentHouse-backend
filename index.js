@@ -16,6 +16,7 @@ app.use(
     origin: [
       "http://localhost:5174",
       "https://rent-easy-building-management.web.app",
+      "https://rent-easy-building-management.firebaseapp.com"
     ],
     credentials: true,
   })
