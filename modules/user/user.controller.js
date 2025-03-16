@@ -24,7 +24,7 @@ const getUserRoleController = async (req, res) => {
     const userData = await getUserRoleFromDB(userEmail);
     return res
       .status(201)
-      .json({ status: "success", data: userData, message: "user created" });
+      .json({ status: "success", data: userData, message: "user role found" });
   } catch (error) {
     return res.status(500).json({ status: "error", error });
   }

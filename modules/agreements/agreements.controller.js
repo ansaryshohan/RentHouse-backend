@@ -1,8 +1,30 @@
 const {
   addAgreementInDB,
+  getAllAgreementDataFromDB,
   getSingleUnPaidAgreementDataFromDB,
   deleteAnAgreementByUserFromDB,
 } = require("./agreements.service");
+
+
+// get all the agreement data for admin controller-------------
+const getAllAgreementsController = async (req, res) => {
+  const { perPageData, pageNo, priceSort } = req.query;
+  // console.log(req.query,Number(pageNo),Number(perPageData));
+  try {
+    const { allAgreements, totalNoOfAgreements } =
+      await getAllAgreementDataFromDB(
+        Number(pageNo),
+        Number(perPageData),
+        priceSort
+      );
+    return res.status(200).json({
+      status: "success",
+      data: { allAgreements, totalNoOfAgreements },
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "success", error });
+  }
+};
 
 // add a Agreement in the database-----------
 const addAgreementController = async (req, res) => {
@@ -96,26 +118,6 @@ const deleteAnUnpaidAgreementController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });
-  }
-};
-
-// get all the apartments data-------------
-const getAllApartmentController = async (req, res) => {
-  const { perPageData, pageNo, priceSort } = req.query;
-  // console.log(req.query,Number(pageNo),Number(perPageData));
-  try {
-    const { allApartments, totalNoOfApartments } =
-      await getAllApartmentDataFromDB(
-        Number(pageNo),
-        Number(perPageData),
-        priceSort
-      );
-    return res.status(200).json({
-      status: "success",
-      data: { allApartments, totalNoOfApartments },
-    });
-  } catch (error) {
-    return res.status(500).json({ status: "success", error });
   }
 };
 
@@ -225,5 +227,6 @@ const deleteAnApartmentController = async (req, res) => {
 module.exports = {
   addAgreementController,
   getSingleUnpaidAgreementController,
+  getAllAgreementsController,
   deleteAnUnpaidAgreementController,
 };

@@ -89,8 +89,8 @@ const deleteAnAgreementByUserFromDB = async (agreementId, userEmail) => {
   }
 };
 
-// get all the apartments
-const getAllApartmentDataFromDB = async (
+// get all the agreement for admin-----
+const getAllAgreementDataFromDB = async (
   pageNo = 0,
   perPageData = 0,
   priceSort = ""
@@ -103,14 +103,12 @@ const getAllApartmentDataFromDB = async (
     sortQuery.price = -1;
   }
   try {
-    const allApartments = await AgreementModel.find({})
+    const allAgreements = await AgreementModel.find({})
       .sort(sortQuery)
       .skip(pageNo * perPageData)
       .limit(perPageData);
-    // console.log(allCars);
-    const totalNoOfApartments = await AgreementModel.countDocuments();
-    // console.log(totalNoOfCars);
-    return { allApartments, totalNoOfApartments };
+    const totalNoOfAgreements = await AgreementModel.countDocuments();
+    return { allAgreements, totalNoOfAgreements };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -227,6 +225,7 @@ const deleteAnApartmentFromDB = async (apartmentId) => {
 
 module.exports = {
   addAgreementInDB,
+  getAllAgreementDataFromDB,
   getSingleUnPaidAgreementDataFromDB,
   deleteAnAgreementByUserFromDB,
 };

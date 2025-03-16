@@ -17,7 +17,8 @@ const createUserDataIntoDB = async (userData) => {
 
 const getUserRoleFromDB = async (userEmail) => {
   try {
-    // find the user
+    if(userEmail){
+      // find the user
     const userFound = await UserModel.findOne(
       { email: userEmail },
       { email: 1, role: 1, _id: 1 }
@@ -27,6 +28,9 @@ const getUserRoleFromDB = async (userEmail) => {
       return isAdmin
     }
     return false;
+    }
+    return false;
+    
   } catch (error) {
     throw new Error(error.message);
   }
