@@ -38,7 +38,7 @@ app.post("/jwt", async (req, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    // sameSite: "none",
+    sameSite: "none",
   });
   //  send response
   res.json({ message: "Login successful" });
@@ -49,7 +49,7 @@ app.post("/remove-jwt", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    // sameSite: "none",
+    sameSite: "none",
   });
 
   res.json({ message: "Logout successful" });
